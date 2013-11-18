@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE ejb-jar PUBLIC "-//Sun Microsystems, Inc.//DTD Enterprise JavaBeans 2.0//EN" "http://java.sun.com/dtd/ejb-jar_2_0.dtd">
+
+<ejb-jar>
+ <enterprise-beans>
+   <entity>
+      <ejb-name>ProductoEJB</ejb-name>
+      <home>servidor.ProductoHome</home>
+      <remote>servidor.ProductoRemote</remote>
+      <ejb-class>servidor.ProductoBean</ejb-class>
+      <persistence-type>Container</persistence-type>
+      <prim-key-class>java.lang.String</prim-key-class>
+      <reentrant>False</reentrant>
+      <cmp-version>2.x</cmp-version>
+      <abstract-schema-name>Producto</abstract-schema-name>
+      <cmp-field><field-name>clave</field-name></cmp-field>
+      <cmp-field><field-name>nombre</field-name></cmp-field>
+      <cmp-field><field-name>precioInicial</field-name></cmp-field>
+      <cmp-field><field-name>precioActual</field-name></cmp-field>
+      <cmp-field><field-name>vendedor</field-name></cmp-field>
+      <primkey-field>clave</primkey-field>
+      <query>
+        <query-method>
+          <method-name>findAll</method-name>
+          <method-params/>
+        </query-method>
+        <ejb-ql>SELECT OBJECT(o) FROM Producto o</ejb-ql>
+      </query>
+
+      <query>
+        <query-method>
+          <method-name>findByName</method-name>
+          <method-params>
+            <method-param>java.lang.String</method-param>
+          </method-params>
+        </query-method>
+        <ejb-ql>
+           SELECT OBJECT(o) FROM Producto o WHERE  o.nombre = ?1
+        </ejb-ql>
+      </query>
+
+
+    
+      <security-identity><use-caller-identity/></security-identity>
+   </entity>
+
+   <session>
+     <ejb-name>SubastaEJB</ejb-name>
+     <home>servidor.SubastaHome</home>
+     <remote>servidor.SubastaRemote</remote>
+     <ejb-class>servidor.SubastaBean</ejb-class>
+     <session-type>Stateless</session-type>
+     <transaction-type>Container</transaction-type>
+
+     <ejb-ref>
+       <ejb-ref-name>ejb/ProductoHomeRemote</ejb-ref-name>  
+       <ejb-ref-type>Entity</ejb-ref-type>
+       <home>servidor.ProductoHome</home>
+       <remote>servidor.ProductoRemote</remote>
+       <ejb-link>ProductoEJB</ejb-link>  
+     </ejb-ref>
+
+     <security-identity><use-caller-identity/></security-identity>
+
+  </session>
+
+ </enterprise-beans>
+
+ <assembly-descriptor>
+   <security-role>
+      <description>
+         This role represents everyone who is allowed full access to the ProductoEJB.
+      </description>
+     <role-name>everyone</role-name>
+   </security-role>
+   <method-permission>
+     <role-name>everyone</role-name>
+     <method>
+         <ejb-name>ProductoEJB</ejb-name>
+         <method-name>*</method-name>
+     </method>
+   </method-permission>
+
+   <container-transaction>
+     <method>
+        <ejb-name>ProductoEJB</ejb-name>
+        <method-name>*</method-name>
+     </method>
+     <trans-attribute>Required</trans-attribute>
+   </container-transaction>
+
+ </assembly-descriptor>
+</ejb-jar>
