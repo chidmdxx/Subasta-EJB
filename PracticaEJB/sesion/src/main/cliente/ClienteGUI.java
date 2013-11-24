@@ -33,13 +33,20 @@ import javax.swing.DefaultListModel;
  *
  * @author Me
  */
-public class ClienteApplet extends javax.swing.JPanel implements ClienteInterface{
+public class ClienteGUI extends javax.swing.JPanel implements javax.ejb.EntityBean {
 
     /**
      * Initializes the applet ClienteApplet
      */
 
-   
+   public String ejbCreate(String clave) throws CreateException
+   {
+      this.setClave(clave);
+      return null;
+   }
+   public void ejbPostCreate(String clave)
+   {
+   }
     @Override
     public void init() {
         /* Set the Nimbus look and feel */
@@ -92,8 +99,7 @@ public class ClienteApplet extends javax.swing.JPanel implements ClienteInterfac
 
 
     Hashtable<String, Producto> productos;
-    Agente tienda;
-    Registry registry;
+    SubastaRemote sesion;
     String nombre;
      DefaultListModel listaPrint=new DefaultListModel();
 
@@ -138,15 +144,25 @@ public class ClienteApplet extends javax.swing.JPanel implements ClienteInterfac
 
     public boolean RegistrarUsuario(String str) {
          try {
-             listaPrint.clear();
 
-             nombre=str;
-             productos = new Hashtable<>();
-            Registry registry = LocateRegistry.getRegistry();
-            ClienteInterface stub = (ClienteInterface) UnicastRemoteObject.exportObject(this, 0);//Va 0 ahí? // creo que si
-            registry.bind(nombre, stub);
-            tienda=(Agente)registry.lookup("Agente");
-            tienda.registraUsuario(nombre);
+            Context jndiContext = new InitialContext();
+            Object ref = jndiContext.lookup("ClienteEJB");
+
+            ClienteHome homec = (ClienteHome)
+                PortableRemoteObject.narrow(ref,
+                        SubastaHome.class);
+
+            ClienteRemote sesion = homec.create(str);
+
+            productos = new Hashtable<>();
+            
+            ref = jndiContext.lookup("SubastaEJB");
+
+            SubastaHome home = (SubastaHome)
+                PortableRemoteObject.narrow(ref,
+                        SubastaHome.class);
+
+            sesion = home.findByPrimaryKey("Tienda");
         } catch (RemoteException | NotBoundException | AlreadyBoundException ex) {
             return false;
         }
@@ -183,7 +199,8 @@ public class ClienteApplet extends javax.swing.JPanel implements ClienteInterfac
     }
     
 
-
+    public abstract void setClave(String clave);
+    public abstract String getClave();
 
     /**
      * This method is called from within the init() method to initialize the

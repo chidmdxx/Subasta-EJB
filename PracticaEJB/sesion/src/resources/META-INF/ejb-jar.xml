@@ -45,6 +45,31 @@
       <security-identity><use-caller-identity/></security-identity>
    </entity>
 
+  <session>
+     <ejb-name>ClienteEJB</ejb-name>
+     <home>cliente.ClienteHome</home>
+     <remote>cliente.ClienteRemote</remote>
+     <ejb-class>cliente.ClienteGUI</ejb-class>
+      <session-type>Stateless</session-type>
+     <transaction-type>Container</transaction-type>
+     
+     <prim-key-class>java.lang.String</prim-key-class>
+     <primkey-field>clave</primkey-field>
+
+     <ejb-ref>
+       <ejb-ref-name>ejb/ProductoHomeRemote</ejb-ref-name>  
+       <ejb-ref-type>Entity</ejb-ref-type>
+       <home>servidor.ProductoHome</home>
+       <remote>servidor.ProductoRemote</remote>
+       <ejb-link>ProductoEJB</ejb-link>  
+     </ejb-ref>
+
+     <security-identity><use-caller-identity/></security-identity>
+
+  </session>
+
+
+
    <session>
      <ejb-name>SubastaEJB</ejb-name>
      <home>servidor.SubastaHome</home>
@@ -52,6 +77,9 @@
      <ejb-class>servidor.SubastaBean</ejb-class>
      <session-type>Stateless</session-type>
      <transaction-type>Container</transaction-type>
+
+     <prim-key-class>java.lang.String</prim-key-class>
+     <primkey-field>clave</primkey-field>
 
      <ejb-ref>
        <ejb-ref-name>ejb/ProductoHomeRemote</ejb-ref-name>  
