@@ -172,7 +172,7 @@ public class ClienteGUI extends javax.swing.JPanel implements javax.ejb.EntityBe
     
     public boolean borrarUsuario() {
          try {
-            tienda.borrarUsuario(nombre);
+            session.borrarUsuario(nombre);
         } catch (RemoteException ex) {
              try {
                  Registry registry = LocateRegistry.getRegistry();
